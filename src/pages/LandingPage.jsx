@@ -510,9 +510,6 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
           </Row>
         </section>
 
-        {/* 2.5 WINDOWS XP INTERACTIVE ARCADE SECTION */}
-        <WindowsXPDesktop />
-
         {/* 3. SUITE PRODUCTS SHOWCASE */}
         <section id="suite" style={{ padding: '60px 24px', maxWidth: '1280px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '48px' }}>
@@ -527,7 +524,7 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
             </Paragraph>
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '24px' }}>
+          <div style={{ textAlign: 'center', marginTop: '24px', marginBottom: '40px' }}>
             <img 
               src={cosmicCarImg} 
               alt="Excelência Tecnológica" 
@@ -538,6 +535,9 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
               }}
             />
           </div>
+
+          {/* ESTAÇÃO WINDOWS XP COM MINI GAME - ABAIXO DA IMAGEM DO CARRO */}
+          <WindowsXPDesktop />
         </section>
 
         {/* 3.5 UNIFIED COMMERCE HUB, UNIVERSAL ITEM MASTER & INVENTORY LEDGER SECTION */}
