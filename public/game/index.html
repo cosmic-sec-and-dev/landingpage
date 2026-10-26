@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Cosmic Retro Arcade XP</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Tahoma", "Segoe UI", sans-serif;
+      background: #000;
+      color: #fff;
+    }
+
+    /* Top Mode Selector Bar */
+    #arcade-header {
+      height: 38px;
+      background: linear-gradient(180deg, #ece9d8 0%, #d8d2bd 100%);
+      border-bottom: 2px solid #7f9db9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      color: #000;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .game-tabs {
+      display: flex;
+      gap: 6px;
+    }
+    .tab-btn {
+      padding: 3px 12px;
+      background: #ece9d8;
+      border: 1px solid #7f9db9;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: inherit;
+    }
+    .tab-btn.active {
+      background: #fff;
+      border-color: #0055ea;
+      color: #0055ea;
+      font-weight: bold;
+      box-shadow: 0 -2px 0 #0055ea inset;
+    }
+    .sound-btn {
+      background: #ece9d8;
+      border: 1px solid #7f9db9;
+      padding: 2px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 11px;
+      font-family: inherit;
+    }
+    .sound-btn:hover {
+      background: #fff;
+    }
+
+    /* Container for Game Views */
+    #game-container {
+      width: 100%;
+      height: calc(100% - 38px);
+      position: relative;
+    }
+
+    /* 1. SPACE SHOOTER VIEW */
+    #space-view {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #050512;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #space-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    #space-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px;
+    }
+    .hud-bar {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      font-weight: bold;
+      color: #38bdf8;
+      text-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+    }
+    #start-screen, #gameover-screen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(8, 13, 26, 0.92);
+      border: 2px solid #38bdf8;
+      border-radius: 8px;
+      padding: 20px 30px;
+      text-align: center;
+      pointer-events: auto;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+    }
+    .retro-btn {
+      margin-top: 14px;
+      padding: 8px 20px;
+      background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+      color: #fff;
+      border: 1px solid #60a5fa;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .retro-btn:hover {
+      background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+    }
+
+    /* 2. MINESWEEPER (CAMPO MINADO) VIEW */
+    #minesweeper-view {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #c0c0c0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      overflow: auto;
+    }
+    .xp-bezel-outer {
+      background: #c0c0c0;
+      border-top: 3px solid #ffffff;
+      border-left: 3px solid #ffffff;
+      border-right: 3px solid #808080;
+      border-bottom: 3px solid #808080;
+      padding: 6px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+    .xp-header-box {
+      border-top: 2px solid #808080;
+      border-left: 2px solid #808080;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      background: #c0c0c0;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .digital-counter {
+      background: #000;
+      color: #ff0000;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 24px;
+      font-weight: 900;
+      padding: 1px 6px;
+      border: 1px solid #808080;
+      letter-spacing: 2px;
+    }
+    .smiley-btn {
+      width: 32px;
+      height: 32px;
+      background: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .smiley-btn:active {
+      border-top: 2px solid #808080;
+      border-left: 2px solid #808080;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+    .mine-grid-frame {
+      border-top: 3px solid #808080;
+      border-left: 3px solid #808080;
+      border-right: 3px solid #ffffff;
+      border-bottom: 3px solid #ffffff;
+      background: #c0c0c0;
+      display: grid;
+      grid-template-columns: repeat(9, 28px);
+      grid-template-rows: repeat(9, 28px);
+      gap: 0;
+    }
+    .mine-cell {
+      width: 28px;
+      height: 28px;
+      background: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: "Tahoma", sans-serif;
+    }
+    .mine-cell.revealed {
+      border: 1px solid #7b7b7b;
+      background: #d4d0c8;
+      cursor: default;
+    }
+    .mine-cell.exploded {
+      background: #ff0000;
+    }
+    .mine-flag-btn {
+      margin-top: 8px;
+      font-size: 11px;
+      background: #c0c0c0;
+      border: 1px solid #7f9db9;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .mine-flag-btn.active {
+      background: #3b82f6;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Retro Header Menu -->
+  <div id="arcade-header">
+    <div class="game-tabs">
+      <button class="tab-btn active" id="tab-space" onclick="switchGame('space')">🚀 Space Defender</button>
+      <button class="tab-btn" id="tab-mine" onclick="switchGame('mine')">💣 Campo Minado XP</button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button class="sound-btn" id="btn-sound" onclick="toggleSound()">🔊 Som: ON</button>
+    </div>
+  </div>
+
+  <div id="game-container">
+    <!-- 1. SPACE SHOOTER -->
+    <div id="space-view">
+      <canvas id="space-canvas"></canvas>
+      <div id="space-overlay">
+        <div class="hud-bar">
+          <span id="score-display">SCORE: 0000</span>
+          <span id="lives-display">VIDAS: ❤️❤️❤️</span>
+          <span id="level-display">NÍVEL: 1</span>
+        </div>
+        <div style="color: #64748b; font-size: 11px; text-align: center;">
+          Controles: <strong>Setas / A-D</strong> para mover | <strong>Espaço / Clique</strong> para atirar
+        </div>
+      </div>
+
+      <div id="start-screen">
+        <h2 style="color: #38bdf8; margin-bottom: 8px;">🚀 COSMIC DEFENDER</h2>
+        <p style="color: #94a3b8; font-size: 13px; line-height: 1.5;">Defenda a galáxia Selene contra a invasão alienígena!</p>
+        <button class="retro-btn" onclick="startSpaceGame()">JOGAR AGORA</button>
+      </div>
+
+      <div id="gameover-screen" style="display: none;">
+        <h2 style="color: #ef4444; margin-bottom: 8px;">FIM DE JOGO</h2>
+        <p id="final-score" style="color: #cbd5e1; font-size: 14px; margin-bottom: 4px;">Score: 0</p>
+        <button class="retro-btn" onclick="startSpaceGame()">TENTAR DE NOVO</button>
+      </div>
+    </div>
+
+    <!-- 2. MINESWEEPER (CAMPO MINADO XP) -->
+    <div id="minesweeper-view">
+      <div class="xp-bezel-outer">
+        <div class="xp-header-box">
+          <div class="digital-counter" id="mine-counter">010</div>
+          <div class="smiley-btn" id="smiley" onclick="initMinesweeper()">🙂</div>
+          <div class="digital-counter" id="timer-counter">000</div>
+        </div>
+        <div class="mine-grid-frame" id="mine-grid"></div>
+      </div>
+      <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px;">
+        <button class="mine-flag-btn" id="flag-mode-btn" onclick="toggleFlagMode()">🚩 Modo Bandeira: OFF</button>
+        <span style="font-size: 11px; color: #333;">(Clique c/ botão direito ou use o botão p/ marcar)</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // AUDIO SYNTH (Web Audio API - No external files, 100% offline & Vercel safe)
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type = 'square', duration = 0.1, gainVal = 0.1) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playLaserSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.12);
+      } catch(e) {}
+    }
+
+    function playExplosionSound() {
+      playTone(120, 'sawtooth', 0.25, 0.15);
+    }
+
+    function playClickSound() {
+      playTone(600, 'sine', 0.04, 0.05);
+    }
+
+    function playWinSound() {
+      playTone(523, 'triangle', 0.1, 0.1);
+      setTimeout(() => playTone(659, 'triangle', 0.1, 0.1), 100);
+      setTimeout(() => playTone(784, 'triangle', 0.2, 0.15), 200);
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('btn-sound').textContent = soundEnabled ? '🔊 Som: ON' : '🔇 Som: OFF';
+    }
+
+    // GAME TAB SWITCHER
+    function switchGame(mode) {
+      playClickSound();
+      const tabSpace = document.getElementById('tab-space');
+      const tabMine = document.getElementById('tab-mine');
+      const viewSpace = document.getElementById('space-view');
+      const viewMine = document.getElementById('minesweeper-view');
+
+      if (mode === 'space') {
+        tabSpace.classList.add('active');
+        tabMine.classList.remove('active');
+        viewSpace.style.display = 'flex';
+        viewMine.style.display = 'none';
+      } else {
+        tabMine.classList.add('active');
+        tabSpace.classList.remove('active');
+        viewSpace.style.display = 'none';
+        viewMine.style.display = 'flex';
+        initMinesweeper();
+      }
+    }
+
+    // ==========================================
+    // 1. SPACE SHOOTER ENGINE
+    // ==========================================
+    const canvas = document.getElementById('space-canvas');
+    const ctx = canvas.getContext('2d');
+    let animationId = null;
+
+    let width, height;
+    function resizeCanvas() {
+      width = canvas.parentElement.clientWidth;
+      height = canvas.parentElement.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Stars
+    let stars = [];
+    for (let i = 0; i < 70; i++) {
+      stars.push({
+        x: Math.random() * 1000,
+        y: Math.random() * 1000,
+        size: Math.random() * 2 + 1,
+        speed: Math.random() * 2 + 0.8
+      });
+    }
+
+    let player = { x: 200, y: 300, size: 24, speed: 6, lives: 3, score: 0 };
+    let bullets = [];
+    let enemies = [];
+    let particles = [];
+    let keys = {};
+    let spaceGameRunning = false;
+    let spawnTimer = 0;
+    let shootCooldown = 0;
+
+    window.addEventListener('keydown', (e) => {
+      keys[e.code] = true;
+      if (e.code === 'Space' && spaceGameRunning) {
+        e.preventDefault();
+        shootBullet();
+      }
+    });
+    window.addEventListener('keyup', (e) => {
+      keys[e.code] = false;
+    });
+
+    // Mouse / Touch Controls
+    canvas.addEventListener('pointermove', (e) => {
+      if (!spaceGameRunning) return;
+      const rect = canvas.getBoundingClientRect();
+      player.x = e.clientX - rect.left;
+    });
+    canvas.addEventListener('pointerdown', (e) => {
+      if (!spaceGameRunning) return;
+      shootBullet();
+    });
+
+    function shootBullet() {
+      if (shootCooldown > 0) return;
+      bullets.push({ x: player.x, y: player.y - 16, vx: 0, vy: -9 });
+      playLaserSound();
+      shootCooldown = 12;
+    }
+
+    function startSpaceGame() {
+      resizeCanvas();
+      player.x = width / 2;
+      player.y = height - 50;
+      player.lives = 3;
+      player.score = 0;
+      bullets = [];
+      enemies = [];
+      particles = [];
+      spaceGameRunning = true;
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('gameover-screen').style.display = 'none';
+      updateHud();
+      if (!animationId) loopSpaceGame();
+    }
+
+    function gameOverSpace() {
+      spaceGameRunning = false;
+      playExplosionSound();
+      document.getElementById('gameover-screen').style.display = 'block';
+      document.getElementById('final-score').textContent = `Score Final: ${player.score}`;
+    }
+
+    function updateHud() {
+      document.getElementById('score-display').textContent = `SCORE: ${player.score.toString().padStart(4, '0')}`;
+      document.getElementById('lives-display').textContent = `VIDAS: ${'❤️'.repeat(Math.max(0, player.lives))}`;
+    }
+
+    function spawnEnemy() {
+      const type = Math.random() > 0.3 ? 'scout' : 'cruiser';
+      enemies.push({
+        x: Math.random() * (width - 40) + 20,
+        y: -20,
+        vx: (Math.random() - 0.5) * 2,
+        vy: type === 'scout' ? 2.5 : 1.6,
+        size: type === 'scout' ? 18 : 26,
+        hp: type === 'scout' ? 1 : 3,
+        color: type === 'scout' ? '#ef4444' : '#a855f7'
+      });
+    }
+
+    function createExplosion(x, y, color = '#38bdf8') {
+      for (let i = 0; i < 16; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4 + 1;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 25,
+          color
+        });
+      }
+    }
+
+    function loopSpaceGame() {
+      animationId = requestAnimationFrame(loopSpaceGame);
+
+      // Clear
+      ctx.fillStyle = '#060814';
+      ctx.fillRect(0, 0, width, height);
+
+      // Stars
+      ctx.fillStyle = '#ffffff';
+      stars.forEach(s => {
+        s.y += s.speed;
+        if (s.y > height) { s.y = 0; s.x = Math.random() * width; }
+        ctx.fillRect(s.x, s.y, s.size, s.size);
+      });
+
+      if (!spaceGameRunning) return;
+
+      if (shootCooldown > 0) shootCooldown--;
+
+      // Controls
+      if (keys['ArrowLeft'] || keys['KeyA']) player.x -= player.speed;
+      if (keys['ArrowRight'] || keys['KeyD']) player.x += player.speed;
+      player.x = Math.max(20, Math.min(width - 20, player.x));
+
+      // Draw Player Ship (Retro Sleek Cyan/Blue)
+      ctx.save();
+      ctx.translate(player.x, player.y);
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.moveTo(0, -18);
+      ctx.lineTo(-14, 14);
+      ctx.lineTo(0, 8);
+      ctx.lineTo(14, 14);
+      ctx.closePath();
+      ctx.fill();
+
+      // Thruster flame
+      ctx.fillStyle = Math.random() > 0.5 ? '#f59e0b' : '#ef4444';
+      ctx.beginPath();
+      ctx.moveTo(-5, 10);
+      ctx.lineTo(0, 18 + Math.random() * 6);
+      ctx.lineTo(5, 10);
+      ctx.fill();
+      ctx.restore();
+
+      // Bullets
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        const b = bullets[i];
+        b.y += b.vy;
+        ctx.fillStyle = '#67e8f9';
+        ctx.shadowColor = '#06b6d4';
+        ctx.shadowBlur = 8;
+        ctx.fillRect(b.x - 2, b.y - 6, 4, 12);
+        ctx.shadowBlur = 0;
+
+        if (b.y < -10) bullets.splice(i, 1);
+      }
+
+      // Spawning
+      spawnTimer++;
+      if (spawnTimer % 45 === 0) {
+        spawnEnemy();
+      }
+
+      // Enemies
+      for (let i = enemies.length - 1; i >= 0; i--) {
+        const e = enemies[i];
+        e.x += e.vx;
+        e.y += e.vy;
+
+        if (e.x < 15 || e.x > width - 15) e.vx *= -1;
+
+        // Draw Enemy
+        ctx.fillStyle = e.color;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Collision with bullets
+        for (let j = bullets.length - 1; j >= 0; j--) {
+          const b = bullets[j];
+          const dist = Math.hypot(e.x - b.x, e.y - b.y);
+          if (dist < e.size / 2 + 4) {
+            bullets.splice(j, 1);
+            e.hp--;
+            createExplosion(b.x, b.y, '#f59e0b');
+            playTone(400, 'square', 0.05, 0.08);
+
+            if (e.hp <= 0) {
+              createExplosion(e.x, e.y, e.color);
+              playExplosionSound();
+              player.score += 100;
+              updateHud();
+              enemies.splice(i, 1);
+              break;
+            }
+          }
+        }
+
+        // Collision with Player
+        if (Math.hypot(e.x - player.x, e.y - player.y) < e.size / 2 + 12) {
+          enemies.splice(i, 1);
+          createExplosion(player.x, player.y, '#ef4444');
+          playExplosionSound();
+          player.lives--;
+          updateHud();
+          if (player.lives <= 0) {
+            gameOverSpace();
+          }
+        }
+
+        // Out of bounds
+        if (e.y > height + 20) {
+          enemies.splice(i, 1);
+        }
+      }
+
+      // Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, 3, 3);
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+    }
+
+    // ==========================================
+    // 2. MINESWEEPER ENGINE (CAMPO MINADO XP)
+    // ==========================================
+    const GRID_SIZE = 9;
+    const MINES_COUNT = 10;
+    let grid = [];
+    let mineTimer = null;
+    let secondsElapsed = 0;
+    let minesLeft = MINES_COUNT;
+    let flagMode = false;
+    let gameOverMine = false;
+    let firstClick = true;
+
+    function initMinesweeper() {
+      clearInterval(mineTimer);
+      mineTimer = null;
+      secondsElapsed = 0;
+      minesLeft = MINES_COUNT;
+      gameOverMine = false;
+      firstClick = true;
+
+      document.getElementById('smiley').textContent = '🙂';
+      document.getElementById('mine-counter').textContent = '010';
+      document.getElementById('timer-counter').textContent = '000';
+
+      const container = document.getElementById('mine-grid');
+      container.innerHTML = '';
+      grid = [];
+
+      for (let r = 0; r < GRID_SIZE; r++) {
+        grid[r] = [];
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = {
+            r, c,
+            mine: false,
+            revealed: false,
+            flagged: false,
+            adjacentMines: 0,
+            el: document.createElement('div')
+          };
+          cell.el.className = 'mine-cell';
+
+          cell.el.addEventListener('mousedown', (e) => {
+            if (e.button === 0 && !cell.revealed && !gameOverMine) {
+              document.getElementById('smiley').textContent = '😮';
+            }
+          });
+
+          cell.el.addEventListener('mouseup', () => {
+            if (!gameOverMine) document.getElementById('smiley').textContent = '🙂';
+          });
+
+          cell.el.addEventListener('click', (e) => {
+            if (flagMode) {
+              toggleFlagCell(cell);
+            } else {
+              clickCell(cell);
+            }
+          });
+
+          cell.el.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            toggleFlagCell(cell);
+          });
+
+          container.appendChild(cell.el);
+          grid[r][c] = cell;
+        }
+      }
+    }
+
+    function toggleFlagMode() {
+      flagMode = !flagMode;
+      const btn = document.getElementById('flag-mode-btn');
+      btn.textContent = flagMode ? '🚩 Modo Bandeira: ON' : '🚩 Modo Bandeira: OFF';
+      btn.classList.toggle('active', flagMode);
+    }
+
+    function toggleFlagCell(cell) {
+      if (cell.revealed || gameOverMine) return;
+      playClickSound();
+      cell.flagged = !cell.flagged;
+      cell.el.textContent = cell.flagged ? '🚩' : '';
+      minesLeft += cell.flagged ? -1 : 1;
+      document.getElementById('mine-counter').textContent = Math.max(0, minesLeft).toString().padStart(3, '0');
+    }
+
+    function placeMines(avoidR, avoidC) {
+      let placed = 0;
+      while (placed < MINES_COUNT) {
+        const r = Math.floor(Math.random() * GRID_SIZE);
+        const c = Math.floor(Math.random() * GRID_SIZE);
+        if (!grid[r][c].mine && !(r === avoidR && c === avoidC)) {
+          grid[r][c].mine = true;
+          placed++;
+        }
+      }
+
+      // Count adjacent
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (!grid[r][c].mine) {
+            let count = 0;
+            for (let dr = -1; dr <= 1; dr++) {
+              for (let dc = -1; dc <= 1; dc++) {
+                const nr = r + dr, nc = c + dc;
+                if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE && grid[nr][nc].mine) {
+                  count++;
+                }
+              }
+            }
+            grid[r][c].adjacentMines = count;
+          }
+        }
+      }
+    }
+
+    const numberColors = ['', '#0000ff', '#008000', '#ff0000', '#000080', '#800000', '#008080', '#000000', '#808080'];
+
+    function clickCell(cell) {
+      if (cell.revealed || cell.flagged || gameOverMine) return;
+
+      if (firstClick) {
+        firstClick = false;
+        placeMines(cell.r, cell.c);
+        mineTimer = setInterval(() => {
+          secondsElapsed++;
+          document.getElementById('timer-counter').textContent = Math.min(999, secondsElapsed).toString().padStart(3, '0');
+        }, 1000);
+      }
+
+      cell.revealed = true;
+      cell.el.classList.add('revealed');
+
+      if (cell.mine) {
+        // Boom!
+        playExplosionSound();
+        cell.el.classList.add('exploded');
+        cell.el.textContent = '💣';
+        gameOverMine = true;
+        clearInterval(mineTimer);
+        document.getElementById('smiley').textContent = '😵';
+
+        // Reveal all mines
+        grid.flat().forEach(c => {
+          if (c.mine) {
+            c.el.classList.add('revealed');
+            c.el.textContent = '💣';
+          }
+        });
+        return;
+      }
+
+      playClickSound();
+
+      if (cell.adjacentMines > 0) {
+        cell.el.textContent = cell.adjacentMines;
+        cell.el.style.color = numberColors[cell.adjacentMines] || '#000';
+      } else {
+        // Flood fill 0s
+        for (let dr = -1; dr <= 1; dr++) {
+          for (let dc = -1; dc <= 1; dc++) {
+            const nr = cell.r + dr, nc = cell.c + dc;
+            if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
+              clickCell(grid[nr][nc]);
+            }
+          }
+        }
+      }
+
+      // Check Win
+      checkMineWin();
+    }
+
+    function checkMineWin() {
+      const nonMines = grid.flat().filter(c => !c.mine);
+      const allRevealed = nonMines.every(c => c.revealed);
+      if (allRevealed && !gameOverMine) {
+        gameOverMine = true;
+        clearInterval(mineTimer);
+        playWinSound();
+        document.getElementById('smiley').textContent = '😎';
+      }
+    }
+
+    // Auto init
+    initMinesweeper();
+  </script>
+</body>
+</html>

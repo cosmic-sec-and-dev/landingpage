@@ -40,6 +40,7 @@ import {
   AuditOutlined
 } from '@ant-design/icons';
 import { useAppTheme } from '../context/ThemeContext';
+import { WindowsXPDesktop } from '../components/WindowsXPDesktop';
 import netexImg from '../assets/images/netex1.png';
 import saasImg from '../assets/images/saas2.png';
 import cosmicCarImg from '../assets/images/cosmic_car.png';
@@ -325,6 +326,9 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
 
           {/* Desktop Nav Links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
+            <a href="#xp-arcade-section" style={{ color: colors.navLinkColor, fontWeight: 600, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span>🕹️</span> Windows XP
+            </a>
             <a href="#suite" style={{ color: colors.navLinkColor, fontWeight: 500, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s' }}>
               Produtos
             </a>
@@ -505,6 +509,9 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
             </Col>
           </Row>
         </section>
+
+        {/* 2.5 WINDOWS XP INTERACTIVE ARCADE SECTION */}
+        <WindowsXPDesktop />
 
         {/* 3. SUITE PRODUCTS SHOWCASE */}
         <section id="suite" style={{ padding: '60px 24px', maxWidth: '1280px', margin: '0 auto' }}>
