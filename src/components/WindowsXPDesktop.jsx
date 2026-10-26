@@ -70,20 +70,7 @@ export function WindowsXPDesktop() {
   };
 
   return (
-    <section id="xp-arcade-section" style={{ padding: '60px 24px', maxWidth: '1280px', margin: '0 auto' }}>
-      {/* Header da Seção */}
-      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <Tag color="cyan" style={{ fontSize: '12px', fontWeight: 700, padding: '2px 14px', borderRadius: '20px' }}>
-          NOSTALGIA &amp; GAMING RETRÔ
-        </Tag>
-        <Title level={2} style={{ color: '#f8fafc', fontSize: '32px', fontWeight: 800, margin: '12px 0 6px', letterSpacing: '-0.5px' }}>
-          Estação Interativa Windows XP
-        </Title>
-        <Paragraph style={{ color: '#94a3b8', fontSize: '15px', maxWidth: '680px', margin: '0 auto' }}>
-          Ambiente clássico com papel de parede Bliss, menu iniciar interativo, data e hora em tempo real na bandeja do sistema e mini-jogos rodando via WebAssembly e Canvas em iframe 100% isolado.
-        </Paragraph>
-      </div>
-
+    <div id="xp-arcade-section" style={{ width: '100%', margin: '0 auto' }}>
       {/* CARD ESTILO WINDOWS XP DESKTOP */}
       <div 
         ref={desktopRef}
@@ -741,6 +728,6 @@ export function WindowsXPDesktop() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
