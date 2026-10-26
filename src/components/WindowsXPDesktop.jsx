@@ -403,7 +403,7 @@ export function WindowsXPDesktop() {
                     border: 'none',
                     display: 'block'
                   }}
-                  allow="autoplay; fullscreen; cross-origin-isolated; gamepad"
+                  allow="fullscreen; cross-origin-isolated; gamepad"
                 />
               </div>
 

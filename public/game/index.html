@@ -273,7 +273,7 @@
       <button class="tab-btn" id="tab-mine" onclick="switchGame('mine')">💣 Campo Minado XP</button>
     </div>
     <div style="display: flex; align-items: center; gap: 8px;">
-      <button class="sound-btn" id="btn-sound" onclick="toggleSound()">🔊 Som: ON</button>
+      <span style="font-size: 11px; color: #64748b;">🔇 Sem som</span>
     </div>
   </div>
 
@@ -323,74 +323,15 @@
   </div>
 
   <script>
-    // AUDIO SYNTH (Web Audio API - No external files, 100% offline & Vercel safe)
-    let audioCtx = null;
-    let soundEnabled = true;
+    // AUDIO DISABLED
+    let soundEnabled = false;
 
-    function getAudioContext() {
-      if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      return audioCtx;
-    }
-
-    function playTone(freq, type = 'square', duration = 0.1, gainVal = 0.1) {
-      if (!soundEnabled) return;
-      try {
-        const ctx = getAudioContext();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + duration);
-      } catch (e) {}
-    }
-
-    function playLaserSound() {
-      if (!soundEnabled) return;
-      try {
-        const ctx = getAudioContext();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(800, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.12);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.12);
-      } catch(e) {}
-    }
-
-    function playExplosionSound() {
-      playTone(120, 'sawtooth', 0.25, 0.15);
-    }
-
-    function playClickSound() {
-      playTone(600, 'sine', 0.04, 0.05);
-    }
-
-    function playWinSound() {
-      playTone(523, 'triangle', 0.1, 0.1);
-      setTimeout(() => playTone(659, 'triangle', 0.1, 0.1), 100);
-      setTimeout(() => playTone(784, 'triangle', 0.2, 0.15), 200);
-    }
-
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      document.getElementById('btn-sound').textContent = soundEnabled ? '🔊 Som: ON' : '🔇 Som: OFF';
-    }
+    function playTone(freq, type = 'square', duration = 0.1, gainVal = 0.1) {}
+    function playLaserSound() {}
+    function playExplosionSound() {}
+    function playClickSound() {}
+    function playWinSound() {}
+    function toggleSound() {}
 
     // GAME TAB SWITCHER
     function switchGame(mode) {
