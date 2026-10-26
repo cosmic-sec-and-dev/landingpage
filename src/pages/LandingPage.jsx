@@ -379,7 +379,9 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
               type="primary" 
               icon={<DashboardOutlined />}
               onClick={onNavigateToAdmin}
+              hidden
               style={{
+                display: 'none',
                 background: 'linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)',
                 borderColor: 'transparent',
                 boxShadow: '0 0 18px rgba(56, 189, 248, 0.35)',
@@ -761,7 +763,9 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
                     size="large"
                     icon={<DashboardOutlined />}
                     onClick={onNavigateToAdmin}
+                    hidden
                     style={{
+                      display: 'none',
                       background: 'linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)',
                       borderColor: 'transparent',
                       fontWeight: 600,
@@ -912,9 +916,6 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
         footer={[
           <Button key="close" onClick={() => setSelectedApplet(null)} style={{ background: isDark ? 'rgba(255,255,255,0.08)' : '#f1f5f9', borderColor: isDark ? 'transparent' : '#cbd5e1', color: colors.textPrimary }}>
             Fechar
-          </Button>,
-          <Button key="enter" type="primary" onClick={() => { setSelectedApplet(null); onNavigateToAdmin(); }} style={{ background: 'linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)', border: 0 }}>
-            Acessar no Dashboard SaaS
           </Button>
         ]}
         width={560}
@@ -989,7 +990,7 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
               <Text strong style={{ color: colors.textPrimary, display: 'block', marginBottom: '12px', fontSize: '14px' }}>Produtos</Text>
               <Space direction="vertical" size="small">
                 <a href="https://cosmic-zip.github.io/NettravelerEX/" target="_blank" style={{ color: colors.textSecondary, fontSize: '13px', textDecoration: 'none' }}>NettravelerEX</a>
-                <a href="#modules" onClick={onNavigateToAdmin} style={{ color: colors.textSecondary, fontSize: '13px', textDecoration: 'none' }}>Selene</a>
+                <a href="#modules" style={{ color: colors.textSecondary, fontSize: '13px', textDecoration: 'none' }}>Selene</a>
                 <a href="#modules" style={{ color: colors.textSecondary, fontSize: '13px', textDecoration: 'none' }}>Catálogo de Applets</a>
               </Space>
             </Col>
