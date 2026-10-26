@@ -7,15 +7,9 @@ import {
   SoundOutlined, 
   SafetyOutlined, 
   WifiOutlined,
-  DesktopOutlined,
-  FolderOpenOutlined,
-  DeleteOutlined,
-  AppstoreOutlined,
-  ExportOutlined,
-  QuestionCircleOutlined,
   PoweroffOutlined,
-  UserOutlined,
-  SettingOutlined
+  FullscreenOutlined,
+  FullscreenExitOutlined
 } from '@ant-design/icons';
 
 const { Title, Paragraph } = Typography;
@@ -24,11 +18,11 @@ export function WindowsXPDesktop() {
   const [windowState, setWindowState] = useState('open'); // 'open' | 'minimized' | 'closed'
   const [isMaximized, setIsMaximized] = useState(false);
   const [isStartOpen, setIsStartOpen] = useState(false);
+  const [currentGame, setCurrentGame] = useState('platformer'); // 'platformer' | 'arcade'
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [activeTab, setActiveTab] = useState('arcade');
   const desktopRef = useRef(null);
 
-  // Clock Update (Data e Hora em tempo real)
+  // Relógio do Sistema (Data e Hora em tempo real)
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -51,6 +45,16 @@ export function WindowsXPDesktop() {
   const dateString = currentTime.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
   const shortDateString = currentTime.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
+  const gameTitles = {
+    platformer: '2D Platformer Demo (Godot 4)',
+    arcade: 'Cosmic Retro Arcade (Space Defender & Campo Minado)'
+  };
+
+  const gameSources = {
+    platformer: '/minigame/index.html',
+    arcade: '/game/index.html'
+  };
+
   const handleTaskbarTabClick = () => {
     if (windowState === 'open') {
       setWindowState('minimized');
@@ -59,18 +63,24 @@ export function WindowsXPDesktop() {
     }
   };
 
+  const openGame = (gameKey) => {
+    setCurrentGame(gameKey);
+    setWindowState('open');
+    setIsStartOpen(false);
+  };
+
   return (
     <section id="xp-arcade-section" style={{ padding: '60px 24px', maxWidth: '1280px', margin: '0 auto' }}>
       {/* Header da Seção */}
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <Tag color="cyan" style={{ fontSize: '12px', fontWeight: 700, padding: '2px 12px', borderRadius: '20px' }}>
-          NOSTALGIA & ARCADE RETRÔ
+        <Tag color="cyan" style={{ fontSize: '12px', fontWeight: 700, padding: '2px 14px', borderRadius: '20px' }}>
+          NOSTALGIA &amp; GAMING RETRÔ
         </Tag>
         <Title level={2} style={{ color: '#f8fafc', fontSize: '32px', fontWeight: 800, margin: '12px 0 6px', letterSpacing: '-0.5px' }}>
           Estação Interativa Windows XP
         </Title>
-        <Paragraph style={{ color: '#94a3b8', fontSize: '15px', maxWidth: '640px', margin: '0 auto' }}>
-          Experimente o clássico papel de parede Bliss, menu iniciar interativo, data e hora em tempo real e jogue mini-games retrô direto no navegador.
+        <Paragraph style={{ color: '#94a3b8', fontSize: '15px', maxWidth: '680px', margin: '0 auto' }}>
+          Ambiente clássico com papel de parede Bliss, menu iniciar interativo, data e hora em tempo real na bandeja do sistema e mini-jogos rodando via WebAssembly e Canvas em iframe 100% isolado.
         </Paragraph>
       </div>
 
@@ -79,10 +89,10 @@ export function WindowsXPDesktop() {
         ref={desktopRef}
         style={{
           width: '100%',
-          height: '620px',
+          height: '660px',
           borderRadius: '14px',
           overflow: 'hidden',
-          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.12)',
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
@@ -90,7 +100,7 @@ export function WindowsXPDesktop() {
           background: '#0a246a'
         }}
       >
-        {/* DESKTOP WORKSPACE COM WALLPAPER BLISS */}
+        {/* ÁREA DE TRABALHO COM PAPEL DE PAREDE BLISS */}
         <div 
           style={{
             flex: 1,
@@ -106,10 +116,10 @@ export function WindowsXPDesktop() {
           }}
         >
           {/* ÍCONES NA ÁREA DE TRABALHO */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', width: '90px' }}>
-            {/* Ícone 1: Cosmic Retro Arcade */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '96px', zIndex: 1, position: 'relative' }}>
+            {/* Ícone: 2D Platformer Game */}
             <div 
-              onClick={() => setWindowState('open')}
+              onClick={() => openGame('platformer')}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -119,11 +129,42 @@ export function WindowsXPDesktop() {
                 padding: '6px 4px',
                 borderRadius: '4px',
                 transition: 'background 0.2s',
-                background: windowState === 'open' ? 'rgba(49, 106, 197, 0.45)' : 'transparent',
-                border: windowState === 'open' ? '1px dotted #ffffff' : '1px solid transparent'
+                background: windowState === 'open' && currentGame === 'platformer' ? 'rgba(49, 106, 197, 0.5)' : 'transparent',
+                border: windowState === 'open' && currentGame === 'platformer' ? '1px dotted #ffffff' : '1px solid transparent'
               }}
             >
-              <div style={{ fontSize: '32px', filter: 'drop-shadow(2px 3px 3px rgba(0,0,0,0.7))' }}>
+              <div style={{ fontSize: '34px', filter: 'drop-shadow(2px 3px 4px rgba(0,0,0,0.8))' }}>
+                🎮
+              </div>
+              <span style={{
+                color: '#ffffff',
+                fontSize: '11px',
+                fontWeight: 600,
+                marginTop: '4px',
+                textShadow: '1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000',
+                lineHeight: 1.2
+              }}>
+                2D Platformer
+              </span>
+            </div>
+
+            {/* Ícone: Cosmic Retro Arcade */}
+            <div 
+              onClick={() => openGame('arcade')}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                cursor: 'pointer',
+                padding: '6px 4px',
+                borderRadius: '4px',
+                transition: 'background 0.2s',
+                background: windowState === 'open' && currentGame === 'arcade' ? 'rgba(49, 106, 197, 0.5)' : 'transparent',
+                border: windowState === 'open' && currentGame === 'arcade' ? '1px dotted #ffffff' : '1px solid transparent'
+              }}
+            >
+              <div style={{ fontSize: '34px', filter: 'drop-shadow(2px 3px 4px rgba(0,0,0,0.8))' }}>
                 🕹️
               </div>
               <span style={{
@@ -134,13 +175,13 @@ export function WindowsXPDesktop() {
                 textShadow: '1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000',
                 lineHeight: 1.2
               }}>
-                Cosmic Arcade
+                Retro Arcade
               </span>
             </div>
 
-            {/* Ícone 2: Meu Computador */}
+            {/* Ícone: Meu Computador */}
             <div 
-              onClick={() => setWindowState('open')}
+              onClick={() => openGame('platformer')}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -151,7 +192,7 @@ export function WindowsXPDesktop() {
                 borderRadius: '4px'
               }}
             >
-              <div style={{ fontSize: '32px', filter: 'drop-shadow(2px 3px 3px rgba(0,0,0,0.7))' }}>
+              <div style={{ fontSize: '34px', filter: 'drop-shadow(2px 3px 4px rgba(0,0,0,0.8))' }}>
                 💻
               </div>
               <span style={{
@@ -166,7 +207,7 @@ export function WindowsXPDesktop() {
               </span>
             </div>
 
-            {/* Ícone 3: Meus Documentos */}
+            {/* Ícone: Lixeira */}
             <div 
               style={{
                 display: 'flex',
@@ -178,34 +219,7 @@ export function WindowsXPDesktop() {
                 borderRadius: '4px'
               }}
             >
-              <div style={{ fontSize: '32px', filter: 'drop-shadow(2px 3px 3px rgba(0,0,0,0.7))' }}>
-                📁
-              </div>
-              <span style={{
-                color: '#ffffff',
-                fontSize: '11px',
-                fontWeight: 600,
-                marginTop: '4px',
-                textShadow: '1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000',
-                lineHeight: 1.2
-              }}>
-                Documentos
-              </span>
-            </div>
-
-            {/* Ícone 4: Lixeira */}
-            <div 
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
-                cursor: 'pointer',
-                padding: '6px 4px',
-                borderRadius: '4px'
-              }}
-            >
-              <div style={{ fontSize: '32px', filter: 'drop-shadow(2px 3px 3px rgba(0,0,0,0.7))' }}>
+              <div style={{ fontSize: '34px', filter: 'drop-shadow(2px 3px 4px rgba(0,0,0,0.8))' }}>
                 🗑️
               </div>
               <span style={{
@@ -221,29 +235,29 @@ export function WindowsXPDesktop() {
             </div>
           </div>
 
-          {/* JANELA ESTILO WINDOWS XP COM IFRAME */}
+          {/* JANELA DO WINDOWS XP COM O JOGO EM IFRAME */}
           {windowState !== 'closed' && (
             <div 
               style={{
                 position: 'absolute',
-                top: isMaximized ? '0' : '16px',
+                top: isMaximized ? '0' : '10px',
                 left: isMaximized ? '0' : '110px',
-                right: isMaximized ? '0' : '20px',
-                bottom: isMaximized ? '0' : '20px',
-                maxWidth: isMaximized ? '100%' : '880px',
-                maxHeight: isMaximized ? '100%' : '520px',
+                right: isMaximized ? '0' : '12px',
+                bottom: isMaximized ? '0' : '12px',
+                maxWidth: isMaximized ? '100%' : '920px',
+                maxHeight: isMaximized ? '100%' : '580px',
                 margin: isMaximized ? '0' : 'auto',
                 display: windowState === 'minimized' ? 'none' : 'flex',
                 flexDirection: 'column',
                 background: '#ece9d8',
                 borderRadius: isMaximized ? '0' : '8px 8px 0 0',
-                boxShadow: isMaximized ? 'none' : '0 12px 32px rgba(0,0,0,0.65), 0 0 0 3px #0055ea',
+                boxShadow: isMaximized ? 'none' : '0 16px 40px rgba(0,0,0,0.7), 0 0 0 3px #0055ea',
                 border: '3px solid #0055ea',
                 zIndex: 10,
-                transition: 'all 0.18s ease-out'
+                transition: 'all 0.15s ease-out'
               }}
             >
-              {/* BARRA DE TÍTULO CLÁSSICA LUNA BLUE */}
+              {/* BARRA DE TÍTULO LUNA BLUE */}
               <div 
                 style={{
                   height: '32px',
@@ -261,12 +275,12 @@ export function WindowsXPDesktop() {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '15px' }}>🕹️</span>
-                  <span>Cosmic Retro Arcade XP — [Space Defender &amp; Campo Minado]</span>
+                  <span style={{ fontSize: '16px' }}>{currentGame === 'platformer' ? '🎮' : '🕹️'}</span>
+                  <span>{gameTitles[currentGame]}</span>
                 </div>
 
-                {/* BOTÕES DE CONTROLE DA JANELA (MINIMIZAR, MAXIMIZAR, FECHAR) */}
-                <div style={{ display: 'flex', gap: '3px' }}>
+                {/* BOTÕES DE CONTROLE DA JANELA */}
+                <div style={{ display: 'flex', gap: '4px' }}>
                   {/* Minimizar */}
                   <button 
                     onClick={() => setWindowState('minimized')}
@@ -286,10 +300,10 @@ export function WindowsXPDesktop() {
                     }}
                     title="Minimizar"
                   >
-                    <MinusOutlined style={{ fontSize: '10px', strokeWidth: '3' }} />
+                    <MinusOutlined style={{ fontSize: '10px' }} />
                   </button>
 
-                  {/* Maximizar */}
+                  {/* Maximizar / Restaurar */}
                   <button 
                     onClick={() => setIsMaximized(!isMaximized)}
                     style={{
@@ -308,7 +322,7 @@ export function WindowsXPDesktop() {
                     }}
                     title={isMaximized ? "Restaurar" : "Maximizar"}
                   >
-                    <BorderOutlined style={{ fontSize: '10px' }} />
+                    {isMaximized ? <FullscreenExitOutlined style={{ fontSize: '11px' }} /> : <BorderOutlined style={{ fontSize: '10px' }} />}
                   </button>
 
                   {/* Fechar */}
@@ -335,38 +349,74 @@ export function WindowsXPDesktop() {
                 </div>
               </div>
 
-              {/* MENU SUPERIOR DA JANELA (XP Style) */}
+              {/* MENU SUPERIOR DA JANELA (XP Style com Seletor de Jogo) */}
               <div 
                 style={{
-                  height: '24px',
+                  height: '26px',
                   background: '#ece9d8',
                   borderBottom: '1px solid #d8d2bd',
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'space-between',
                   padding: '0 8px',
-                  gap: '12px',
                   fontSize: '11px',
                   color: '#000000'
                 }}
               >
-                <span style={{ cursor: 'pointer' }}><u>J</u>ogo</span>
-                <span style={{ cursor: 'pointer' }}><u>O</u>pções</span>
-                <span style={{ cursor: 'pointer' }}><u>E</u>xibir</span>
-                <span style={{ cursor: 'pointer' }}><u>A</u>juda</span>
+                <div style={{ display: 'flex', gap: '14px' }}>
+                  <span style={{ cursor: 'pointer' }}><u>J</u>ogo</span>
+                  <span style={{ cursor: 'pointer' }}><u>O</u>pções</span>
+                  <span style={{ cursor: 'pointer' }}><u>A</u>juda</span>
+                </div>
+
+                {/* Alternador Rápido de Jogos */}
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <button
+                    onClick={() => setCurrentGame('platformer')}
+                    style={{
+                      fontSize: '11px',
+                      padding: '1px 8px',
+                      background: currentGame === 'platformer' ? '#0055ea' : '#ece9d8',
+                      color: currentGame === 'platformer' ? '#ffffff' : '#000000',
+                      border: '1px solid #7f9db9',
+                      borderRadius: '2px',
+                      cursor: 'pointer',
+                      fontWeight: currentGame === 'platformer' ? 'bold' : 'normal'
+                    }}
+                  >
+                    🎮 2D Platformer (Godot)
+                  </button>
+                  <button
+                    onClick={() => setCurrentGame('arcade')}
+                    style={{
+                      fontSize: '11px',
+                      padding: '1px 8px',
+                      background: currentGame === 'arcade' ? '#0055ea' : '#ece9d8',
+                      color: currentGame === 'arcade' ? '#ffffff' : '#000000',
+                      border: '1px solid #7f9db9',
+                      borderRadius: '2px',
+                      cursor: 'pointer',
+                      fontWeight: currentGame === 'arcade' ? 'bold' : 'normal'
+                    }}
+                  >
+                    🕹️ Retro Arcade XP
+                  </button>
+                </div>
               </div>
 
-              {/* CORPO DA JANELA: O IFRAME DO MINI JOGO */}
+              {/* CORPO DA JANELA: O IFRAME DO JOGO */}
               <div style={{ flex: 1, position: 'relative', background: '#000000', overflow: 'hidden' }}>
                 <iframe 
-                  src="/game/index.html" 
-                  title="Cosmic Retro Arcade XP"
+                  key={currentGame}
+                  src={gameSources[currentGame]}
+                  title={gameTitles[currentGame]}
                   style={{
                     width: '100%',
                     height: '100%',
                     border: 'none',
                     display: 'block'
                   }}
-                  allow="autoplay"
+                  allow="autoplay; fullscreen; cross-origin-isolated; gamepad"
                 />
               </div>
 
@@ -386,9 +436,9 @@ export function WindowsXPDesktop() {
               >
                 <div style={{ display: 'flex', gap: '16px' }}>
                   <span>Status: <strong>Pronto</strong></span>
-                  <span>Motor: <strong>Canvas 60 FPS</strong></span>
+                  <span>Execução: <strong>WebAssembly &amp; Canvas</strong></span>
                 </div>
-                <span>Cosmic Sec&amp;Dev • Selene Suite</span>
+                <span>Cosmic Sec&amp;Dev • Windows XP Edition</span>
               </div>
             </div>
           )}
@@ -401,12 +451,12 @@ export function WindowsXPDesktop() {
                 position: 'absolute',
                 bottom: '36px',
                 left: '0',
-                width: '380px',
+                width: '390px',
                 height: '420px',
                 background: '#ffffff',
                 borderRadius: '8px 8px 0 0',
                 border: '2px solid #0055ea',
-                boxShadow: '4px -4px 20px rgba(0,0,0,0.5)',
+                boxShadow: '4px -4px 25px rgba(0,0,0,0.6)',
                 display: 'flex',
                 flexDirection: 'column',
                 zIndex: 100,
@@ -434,7 +484,7 @@ export function WindowsXPDesktop() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '20px'
+                  fontSize: '22px'
                 }}>
                   👨‍💻
                 </div>
@@ -448,19 +498,28 @@ export function WindowsXPDesktop() {
                 </div>
               </div>
 
-              {/* Duas Colunas Clássicas do Menu Iniciar */}
+              {/* Duas Colunas do Menu Iniciar */}
               <div style={{ flex: 1, display: 'flex' }}>
-                {/* Coluna Esquerda (Branca - Programas) */}
-                <div style={{ width: '50%', background: '#ffffff', borderRight: '1px solid #d8d2bd', padding: '10px 8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {/* Coluna Esquerda (Programas) */}
+                <div style={{ width: '52%', background: '#ffffff', borderRight: '1px solid #d8d2bd', padding: '10px 8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div 
-                    onClick={() => { setWindowState('open'); setIsStartOpen(false); }}
-                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', cursor: 'pointer', borderRadius: '4px' }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#2f71cd'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    onClick={() => openGame('platformer')}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', cursor: 'pointer', borderRadius: '4px', background: currentGame === 'platformer' ? '#e0f2fe' : 'transparent' }}
                   >
-                    <span style={{ fontSize: '20px' }}>🕹️</span>
+                    <span style={{ fontSize: '22px' }}>🎮</span>
                     <div>
-                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#000' }}>Cosmic Arcade</div>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#000' }}>2D Platformer</div>
+                      <div style={{ fontSize: '10px', color: '#64748b' }}>Godot 4 Web Demo</div>
+                    </div>
+                  </div>
+
+                  <div 
+                    onClick={() => openGame('arcade')}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', cursor: 'pointer', borderRadius: '4px', background: currentGame === 'arcade' ? '#e0f2fe' : 'transparent' }}
+                  >
+                    <span style={{ fontSize: '22px' }}>🕹️</span>
+                    <div>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#000' }}>Retro Arcade</div>
                       <div style={{ fontSize: '10px', color: '#64748b' }}>Space &amp; Campo Minado</div>
                     </div>
                   </div>
@@ -471,7 +530,7 @@ export function WindowsXPDesktop() {
                     rel="noreferrer"
                     style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', cursor: 'pointer', textDecoration: 'none' }}
                   >
-                    <span style={{ fontSize: '20px' }}>🚀</span>
+                    <span style={{ fontSize: '22px' }}>🚀</span>
                     <div>
                       <div style={{ fontSize: '12px', fontWeight: 700, color: '#000' }}>NettravelerEX</div>
                       <div style={{ fontSize: '10px', color: '#64748b' }}>Purple Team OPSEC</div>
@@ -483,7 +542,7 @@ export function WindowsXPDesktop() {
                     onClick={() => setIsStartOpen(false)}
                     style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', cursor: 'pointer', textDecoration: 'none' }}
                   >
-                    <span style={{ fontSize: '20px' }}>🌘</span>
+                    <span style={{ fontSize: '22px' }}>🌘</span>
                     <div>
                       <div style={{ fontSize: '12px', fontWeight: 700, color: '#000' }}>Selene Suite</div>
                       <div style={{ fontSize: '10px', color: '#64748b' }}>Plataforma SaaS</div>
@@ -491,8 +550,8 @@ export function WindowsXPDesktop() {
                   </a>
                 </div>
 
-                {/* Coluna Direita (Azul Clara Luna) */}
-                <div style={{ width: '50%', background: '#d3e5fa', padding: '10px 10px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px', color: '#0c3298', fontWeight: 600 }}>
+                {/* Coluna Direita (Atalhos Luna) */}
+                <div style={{ width: '48%', background: '#d3e5fa', padding: '10px 10px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px', color: '#0c3298', fontWeight: 600 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                     <span>📁</span> <span>Meus Documentos</span>
                   </div>
@@ -545,7 +604,7 @@ export function WindowsXPDesktop() {
           )}
         </div>
 
-        {/* BARRA DE TAREFAS CLÁSSICA (TASKBAR LUNA BLUE) */}
+        {/* BARRA DE TAREFAS CLÁSSICA LUNA */}
         <div 
           style={{
             height: '34px',
@@ -559,7 +618,7 @@ export function WindowsXPDesktop() {
             boxShadow: '0 -2px 6px rgba(0,0,0,0.3)'
           }}
         >
-          {/* LADO ESQUERDO: BOTÃO INICIAR + JANELAS ABERTAS */}
+          {/* LADO ESQUERDO: BOTÃO INICIAR + JANELA ATIVA */}
           <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
             {/* BOTÃO INICIAR VERDE ICÔNICO DO WINDOWS XP */}
             <button
@@ -599,7 +658,7 @@ export function WindowsXPDesktop() {
               <span style={{ letterSpacing: '0.5px' }}>iniciar</span>
             </button>
 
-            {/* SEPARADOR SUTIL */}
+            {/* SEPARADOR */}
             <div style={{ width: '12px' }} />
 
             {/* ABA DA JANELA ATIVA NA BARRA DE TAREFAS */}
@@ -609,7 +668,7 @@ export function WindowsXPDesktop() {
                 style={{
                   height: '26px',
                   minWidth: '180px',
-                  maxWidth: '220px',
+                  maxWidth: '240px',
                   background: windowState === 'open'
                     ? 'linear-gradient(180deg, #18429b 0%, #2056c7 40%, #153c90 100%)'
                     : 'linear-gradient(180deg, #3c80e7 0%, #2668d2 60%, #1952d5 100%)',
@@ -628,9 +687,9 @@ export function WindowsXPDesktop() {
                   fontWeight: 600
                 }}
               >
-                <span>🕹️</span>
+                <span>{currentGame === 'platformer' ? '🎮' : '🕹️'}</span>
                 <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  Cosmic Retro Arcade
+                  {gameTitles[currentGame]}
                 </span>
               </div>
             )}
@@ -654,8 +713,8 @@ export function WindowsXPDesktop() {
             {/* Ícones da Bandeja */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#bae6fd' }}>
               <SoundOutlined title="Volume: 100%" style={{ fontSize: '12px', cursor: 'pointer' }} />
-              <SafetyOutlined title="Proteção de Segurança Ativa" style={{ fontSize: '12px', cursor: 'pointer' }} />
-              <WifiOutlined title="Conexão de Rede: Excelente" style={{ fontSize: '12px', cursor: 'pointer' }} />
+              <SafetyOutlined title="Proteção de Segurança: Ativa" style={{ fontSize: '12px', cursor: 'pointer' }} />
+              <WifiOutlined title="Rede: Conectada" style={{ fontSize: '12px', cursor: 'pointer' }} />
             </div>
 
             {/* SEPARADOR INSET */}

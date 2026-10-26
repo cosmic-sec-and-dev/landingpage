@@ -2,7 +2,34 @@
   "framework": "vite",
   "buildCommand": "vite build",
   "outputDirectory": "dist",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Cross-Origin-Embedder-Policy",
+          "value": "credentialless"
+        }
+      ]
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/minigame/:path*",
+      "destination": "/minigame/:path*"
+    },
+    {
+      "source": "/game/:path*",
+      "destination": "/game/:path*"
+    },
+    {
+      "source": "/images/:path*",
+      "destination": "/images/:path*"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
