@@ -53,8 +53,8 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
 
   const colors = {
     bgRoot: isDark
-      ? 'linear-gradient(135deg, rgba(0, 0, 0, 1) 0%, rgb(10, 11, 61) 50%, rgb(166, 38, 122) 100%)'
-      : 'linear-gradient(135deg, rgb(255, 220, 249) 0%, rgb(229, 246, 255) 40%, rgb(249, 243, 190) 100%)',
+      ? 'linear-gradient(135deg, #151C37 0%, #273357 40%, #5D4B85 75%, #C05E6E 100%)'
+      : 'linear-gradient(135deg, #F7E9EC 0%, #EFDFD2 40%, #E0ECF5 75%, #FBEADB 100%)',
     textPrimary: isDark ? '#f8fafc' : '#0f172a',
     textSecondary: isDark ? '#94a3b8' : '#475569',
     textMuted: isDark ? '#64748b' : '#94a3b8',
@@ -326,9 +326,6 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
 
           {/* Desktop Nav Links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-            <a href="#xp-arcade-section" style={{ color: colors.navLinkColor, fontWeight: 600, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span>🕹️</span> Windows XP
-            </a>
             <a href="#suite" style={{ color: colors.navLinkColor, fontWeight: 500, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s' }}>
               Produtos
             </a>
@@ -383,9 +380,7 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
               type="primary" 
               icon={<DashboardOutlined />}
               onClick={onNavigateToAdmin}
-              hidden
               style={{
-                display: 'none',
                 background: 'linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)',
                 borderColor: 'transparent',
                 boxShadow: '0 0 18px rgba(56, 189, 248, 0.35)',
@@ -536,7 +531,7 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
             />
           </div>
 
-          {/* ESTAÇÃO WINDOWS XP COM MINI GAME - ABAIXO DA IMAGEM DO CARRO */}
+          {/* ESTAÇÃO WINDOWS XP COM MINI GAME ABAIXO DA IMAGEM DO CARRO */}
           <WindowsXPDesktop />
         </section>
 
@@ -770,9 +765,7 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
                     size="large"
                     icon={<DashboardOutlined />}
                     onClick={onNavigateToAdmin}
-                    hidden
                     style={{
-                      display: 'none',
                       background: 'linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)',
                       borderColor: 'transparent',
                       fontWeight: 600,
@@ -923,6 +916,9 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
         footer={[
           <Button key="close" onClick={() => setSelectedApplet(null)} style={{ background: isDark ? 'rgba(255,255,255,0.08)' : '#f1f5f9', borderColor: isDark ? 'transparent' : '#cbd5e1', color: colors.textPrimary }}>
             Fechar
+          </Button>,
+          <Button key="enter" type="primary" onClick={() => { setSelectedApplet(null); onNavigateToAdmin(); }} style={{ background: 'linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)', border: 0 }}>
+            Acessar no Dashboard SaaS
           </Button>
         ]}
         width={560}
@@ -988,16 +984,20 @@ export const LandingPage = ({ onNavigateToAdmin, onOpenLogin }) => {
                   SELENE SUITE
                 </span>
               </div>
-              <Paragraph style={{ color: colors.textSecondary, fontSize: '13px', lineHeight: 1.6, maxWidth: '320px' }}>
+              <Paragraph style={{ color: colors.textSecondary, fontSize: '13px', lineHeight: 1.6, maxWidth: '320px', marginBottom: '12px' }}>
                 Ecossistema corporativo desenvolvido por <strong>Cosmic Sec&Dev</strong>. Software development and cybersecurity consulting.
               </Paragraph>
+              <div style={{ color: colors.textSecondary, fontSize: '13px', lineHeight: 1.6 }}>
+                <div><Text strong style={{ color: colors.textPrimary }}>CNPJ:</Text> 69.822.678/0001-56</div>
+                <div><Text strong style={{ color: colors.textPrimary }}>Telefone:</Text> <a href="tel:08699518470" style={{ color: colors.textSecondary, textDecoration: 'none' }}>086 99518470</a></div>
+              </div>
             </Col>
 
             <Col xs={12} sm={6} md={4}>
               <Text strong style={{ color: colors.textPrimary, display: 'block', marginBottom: '12px', fontSize: '14px' }}>Produtos</Text>
               <Space direction="vertical" size="small">
                 <a href="https://cosmic-zip.github.io/NettravelerEX/" target="_blank" style={{ color: colors.textSecondary, fontSize: '13px', textDecoration: 'none' }}>NettravelerEX</a>
-                <a href="#modules" style={{ color: colors.textSecondary, fontSize: '13px', textDecoration: 'none' }}>Selene</a>
+                <a href="#modules" onClick={onNavigateToAdmin} style={{ color: colors.textSecondary, fontSize: '13px', textDecoration: 'none' }}>Selene</a>
                 <a href="#modules" style={{ color: colors.textSecondary, fontSize: '13px', textDecoration: 'none' }}>Catálogo de Applets</a>
               </Space>
             </Col>
