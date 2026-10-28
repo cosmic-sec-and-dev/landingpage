@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Selene 🌘</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    </noscript>
     <style>
       *, *::before, *::after {
         box-sizing: border-box;
@@ -19,13 +22,15 @@
         width: 100%;
         overflow-x: hidden;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background-color: #080d1a;
+        background-color: #0d1224;
         color: #f8fafc;
       }
       #root {
         min-height: 100vh;
         width: 100%;
       }
+
+      /* Global Sleek Scrollbar */
       ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -39,6 +44,97 @@
       }
       ::-webkit-scrollbar-thumb:hover {
         background: rgba(56, 189, 248, 0.45);
+      }
+
+      /* Sidebar Custom Thin Scrollbar */
+      .custom-sidebar-scroll::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-sidebar-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 4px;
+      }
+      .custom-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(56, 189, 248, 0.4);
+      }
+
+      /* Content Scrollbar */
+      .custom-content-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-content-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-content-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+      }
+      .custom-content-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(56, 189, 248, 0.5);
+      }
+
+      /* Ghost Sidebar Menu - Completely Transparent default, solid hover/selected */
+      .custom-ghost-menu.ant-menu {
+        background: transparent !important;
+        border-inline-end: none !important;
+      }
+      .custom-ghost-menu .ant-menu-item,
+      .custom-ghost-menu .ant-menu-submenu-title {
+        background: transparent !important;
+        margin-inline: 0 !important;
+        width: 100% !important;
+        border-radius: 8px !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+      .custom-ghost-menu .ant-menu-item:hover,
+      .custom-ghost-menu .ant-menu-submenu-title:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+      }
+      .custom-ghost-menu .ant-menu-item-selected {
+        background: #1d4ed8 !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+      }
+      .custom-ghost-menu .ant-menu-sub.ant-menu-inline {
+        background: transparent !important;
+      }
+      .custom-ghost-menu.ant-menu-light .ant-menu-item:hover,
+      .custom-ghost-menu.ant-menu-light .ant-menu-submenu-title:hover {
+        background: rgba(0, 0, 0, 0.06) !important;
+      }
+      .custom-ghost-menu.ant-menu-light .ant-menu-item-selected {
+        background: #0284c7 !important;
+        color: #ffffff !important;
+      }
+
+      /* Hide arrow ONLY on root level submenu items, retain on Data Explorer nested submenus */
+      .custom-ghost-menu.ant-menu-root > .ant-menu-submenu > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
+        display: none !important;
+      }
+      .custom-ghost-menu.ant-menu-root .ant-menu-sub .ant-menu-submenu > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
+        display: inline-block !important;
+      }
+
+      /* Delay + FadeIn for sidebar title Selene on expand */
+      @keyframes seleneFadeIn {
+        0% {
+          opacity: 0;
+          transform: translateX(-6px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .selene-title-fadein {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        animation: seleneFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.22s both !important;
       }
     </style>
   </head>

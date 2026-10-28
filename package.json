@@ -1,5 +1,5 @@
 {
-  "name": "cosmic",
+  "name": "selene-frontend-admin",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -9,10 +9,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.6.1",
-    "antd": "^5.24.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "antd": "^5.24.1",
+    "@ant-design/icons": "^5.6.1",
+    "@tiptap/react": "^2.11.5",
+    "@tiptap/pm": "^2.11.5",
+    "@tiptap/starter-kit": "^2.11.5",
+    "@tiptap/extension-image": "^2.11.5",
+    "@tiptap/extension-link": "^2.11.5",
+    "@tiptap/extension-placeholder": "^2.11.5",
+    "@tiptap/extension-underline": "^2.11.5",
+    "@tiptap/extension-text-align": "^2.11.5"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
