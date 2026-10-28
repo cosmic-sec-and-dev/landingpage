@@ -13720,7 +13720,7 @@ export function App() {
   if (currentRoute === 'landing') {
     return (
       <ThemeProvider initialMode="dark">
-        <PlanProvider>
+        <PlanProvider appletsConfig={appletsConfig}>
           <AntdApp>
             <Suspense fallback={<LoadingFallback />}>
               <LandingPage 
@@ -13736,7 +13736,7 @@ export function App() {
 
   return (
     <ThemeProvider initialMode="light">
-      <PlanProvider>
+      <PlanProvider appletsConfig={appletsConfig}>
         <AntdApp>
           <AdminLayout applets={appletsConfig} currentRoute={currentRoute} onNavigate={setCurrentRoute}>
             <Suspense fallback={<LoadingFallback />}>

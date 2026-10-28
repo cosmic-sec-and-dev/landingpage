@@ -9,7 +9,9 @@ import {
   CheckCircleOutlined,
   StopOutlined,
   MailOutlined,
-  SafetyCertificateOutlined
+  SafetyCertificateOutlined,
+  BankOutlined,
+  CrownOutlined
 } from '@ant-design/icons';
 
 const { Text, Paragraph } = Typography;
@@ -25,6 +27,8 @@ const ROLE_COLORS = {
 
 export const UserCard = ({
   user,
+  tenants = [],
+  isSuperadmin = false,
   onEdit,
   onDelete,
   onManagePermissions,
@@ -32,6 +36,8 @@ export const UserCard = ({
 }) => {
   const roleColor = ROLE_COLORS[user.role?.toLowerCase()] || 'blue';
   const isActive = user.is_active !== false;
+  const isPrimordialAdmin = user.role?.toLowerCase() === 'admin';
+  const tenant = tenants.find(t => t.id === user.tenant_id);
 
   const menuItems = [
     {
@@ -116,12 +122,23 @@ export const UserCard = ({
         </div>
 
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
-          <Tag color={roleColor} icon={<SafetyCertificateOutlined />}>
-            {user.role ? user.role.toUpperCase() : 'VIEWER'}
-          </Tag>
+          {isPrimordialAdmin ? (
+            <Tag color="gold" icon={<CrownOutlined />} style={{ fontWeight: 600 }}>
+              ADMIN PRIMORDIAL
+            </Tag>
+          ) : (
+            <Tag color={roleColor} icon={<SafetyCertificateOutlined />}>
+              {user.role ? user.role.toUpperCase() : 'VIEWER'}
+            </Tag>
+          )}
           <Tag color={isActive ? 'success' : 'error'}>
             {isActive ? 'Ativo' : 'Inativo'}
           </Tag>
+          {isSuperadmin && tenant && (
+            <Tag color="geekblue" icon={<BankOutlined />}>
+              {tenant.name}
+            </Tag>
+          )}
         </div>
       </div>
 

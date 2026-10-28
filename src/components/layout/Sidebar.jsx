@@ -102,14 +102,18 @@ const renderRoundIcon = (scheme, size = 36) => (
 );
 
 export const Sidebar = ({ applets = {}, modules = {}, currentRoute, onNavigate }) => {
-  const { hasAccess, currentUser } = usePlan();
+  const { hasAccess, currentUser, authorizedApplets } = usePlan();
   const { isDark } = useAppTheme();
   const [collapsed, setCollapsed] = useState(false);
 
   const rawRole = (currentUser?.role || currentUser?.user_role || 'admin').toLowerCase();
   const isAdmin = rawRole === 'superadmin' || rawRole === 'admin' || rawRole === 'authenticated';
 
-  const appletsList = Object.keys(applets).length > 0 ? applets : modules;
+  const effectiveApplets = (authorizedApplets && Object.keys(authorizedApplets).length > 0)
+    ? authorizedApplets
+    : (Object.keys(applets).length > 0 ? applets : modules);
+
+  const appletsList = effectiveApplets;
 
   // Group 1 priority order as requested:
   // Authentication, Identity & Profile, Users & RBAC, Tenants, Plans & Subscriptions, Notifications, Infrastructure
@@ -153,6 +157,8 @@ export const Sidebar = ({ applets = {}, modules = {}, currentRoute, onNavigate }
   // --- EXPANDED MODE: Round colorful icons (36px) with clean labels ---
   const createExpandedMenuItem = (tag, endpoints) => {
     const isAppletAllowed = hasAccess(tag);
+    if (!isAppletAllowed) return null;
+
     const cleanAppKey = tag.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
     const scheme = getScheme(tag);
 
@@ -161,7 +167,6 @@ export const Sidebar = ({ applets = {}, modules = {}, currentRoute, onNavigate }
         key: cleanAppKey === 'kanban' ? 'kanban' : `${cleanAppKey}_main`,
         label: tag,
         icon: renderRoundIcon(scheme, 22),
-        disabled: !isAppletAllowed
       }
     ];
 
@@ -169,14 +174,12 @@ export const Sidebar = ({ applets = {}, modules = {}, currentRoute, onNavigate }
       const dataExplorerChildren = endpoints.map(ep => ({
         key: ep.endpoint_key,
         label: ep.path,
-        disabled: !isAppletAllowed
       }));
 
       appletChildren.push({
         key: `${cleanAppKey}_data_explorer`,
         label: 'Data Explorer',
         icon: <DatabaseOutlined style={{ color: scheme.color }} />,
-        disabled: !isAppletAllowed,
         children: dataExplorerChildren
       });
     }
@@ -185,7 +188,6 @@ export const Sidebar = ({ applets = {}, modules = {}, currentRoute, onNavigate }
       key: tag,
       icon: renderRoundIcon(scheme, 36),
       label: tag,
-      disabled: !isAppletAllowed,
       children: appletChildren
     };
   };
@@ -203,26 +205,29 @@ export const Sidebar = ({ applets = {}, modules = {}, currentRoute, onNavigate }
     }
   ];
 
+  const visibleG1 = group1Entries.map(([tag, endpoints]) => createExpandedMenuItem(tag, endpoints)).filter(Boolean);
+  const visibleG2 = group2Entries.map(([tag, endpoints]) => createExpandedMenuItem(tag, endpoints)).filter(Boolean);
+
   const expandedMenuItems = [
     ...expandedBaseItems,
-    {
+    ...(visibleG1.length > 0 ? [{
       type: 'divider',
       key: 'divider-base-g1',
       style: {
         borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
         margin: '12px 0'
       }
-    },
-    ...group1Entries.map(([tag, endpoints]) => createExpandedMenuItem(tag, endpoints)),
-    {
+    }] : []),
+    ...visibleG1,
+    ...(visibleG2.length > 0 ? [{
       type: 'divider',
       key: 'divider-g1-g2',
       style: {
         borderColor: isDark ? 'rgba(56, 189, 248, 0.2)' : 'rgba(0, 0, 0, 0.08)',
         margin: '16px 0'
       }
-    },
-    ...group2Entries.map(([tag, endpoints]) => createExpandedMenuItem(tag, endpoints))
+    }] : []),
+    ...visibleG2
   ];
 
   // --- COMPACT MODE: Round, colorful icons (36px) with clean tooltips ---
@@ -434,25 +439,27 @@ export const Sidebar = ({ applets = {}, modules = {}, currentRoute, onNavigate }
             }} />
 
             {/* Group 1: Authentication, Identity, Users, Tenants, Plans, Notifications, Infrastructure */}
-            {group1Entries.map(([tag]) => {
+            {group1Entries.filter(([tag]) => hasAccess(tag)).map(([tag]) => {
               const cleanAppKey = tag.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
               const primaryRoute = cleanAppKey === 'kanban' ? 'kanban' : `${cleanAppKey}_main`;
-              return renderCompactIcon(getScheme(tag), tag, primaryRoute, hasAccess(tag));
+              return renderCompactIcon(getScheme(tag), tag, primaryRoute, true);
             })}
 
             {/* Divider between Group 1 and Group 2 */}
-            <div style={{
-              width: '28px',
-              height: '1px',
-              background: isDark ? 'rgba(56, 189, 248, 0.25)' : 'rgba(0, 0, 0, 0.12)',
-              margin: '10px auto'
-            }} />
+            {group2Entries.some(([tag]) => hasAccess(tag)) && (
+              <div style={{
+                width: '28px',
+                height: '1px',
+                background: isDark ? 'rgba(56, 189, 248, 0.25)' : 'rgba(0, 0, 0, 0.12)',
+                margin: '10px auto'
+              }} />
+            )}
 
             {/* Group 2: All remaining applets */}
-            {group2Entries.map(([tag]) => {
+            {group2Entries.filter(([tag]) => hasAccess(tag)).map(([tag]) => {
               const cleanAppKey = tag.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
               const primaryRoute = cleanAppKey === 'kanban' ? 'kanban' : `${cleanAppKey}_main`;
-              return renderCompactIcon(getScheme(tag), tag, primaryRoute, hasAccess(tag));
+              return renderCompactIcon(getScheme(tag), tag, primaryRoute, true);
             })}
           </div>
         )}

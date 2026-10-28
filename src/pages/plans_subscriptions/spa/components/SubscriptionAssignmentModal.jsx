@@ -21,6 +21,7 @@ export const SubscriptionAssignmentModal = ({
   const [form] = Form.useForm();
   const [isActive, setIsActive] = useState(true);
   const [loading, setLoading] = useState(false);
+  const isEditing = Boolean(record?.id);
 
   useEffect(() => {
     if (visible) {
@@ -46,7 +47,7 @@ export const SubscriptionAssignmentModal = ({
     };
 
     try {
-      if (!record) {
+      if (!isEditing) {
         const res = await apiRequest('/subscriptions', {
           method: 'POST',
           body: JSON.stringify(payload)
@@ -78,7 +79,7 @@ export const SubscriptionAssignmentModal = ({
 
   return (
     <Modal
-      title={record ? 'Editar Assinatura do Tenant' : 'Vincular Plano / Nova Assinatura'}
+      title={isEditing ? 'Editar Assinatura do Tenant' : 'Vincular Plano / Nova Assinatura'}
       open={visible}
       onCancel={onClose}
       width={520}
@@ -93,7 +94,7 @@ export const SubscriptionAssignmentModal = ({
           loading={loading}
           onClick={() => form.submit()}
         >
-          {record ? 'Salvar Assinatura' : 'Criar Assinatura'}
+          {isEditing ? 'Salvar Assinatura' : 'Criar Assinatura'}
         </Button>
       ]}
       destroyOnHidden

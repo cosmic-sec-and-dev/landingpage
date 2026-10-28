@@ -10,7 +10,7 @@ import { UserEditorModal } from './components/UserEditorModal';
 import { RolePermissionsMatrixModal } from './components/RolePermissionsMatrixModal';
 
 export const UsersRbacSpaPage = () => {
-  const { hasAccess } = usePlan();
+  const { hasAccess, isSuperadmin } = usePlan();
   const { isDark } = useAppTheme();
 
   if (!hasAccess('Users & RBAC') && !hasAccess('users') && !hasAccess('users_rbac')) {
@@ -29,6 +29,7 @@ export const UsersRbacSpaPage = () => {
   const [permissions, setPermissions] = useState([]);
   const [userPermissions, setUserPermissions] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [tenants, setTenants] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // Modals state
@@ -41,12 +42,13 @@ export const UsersRbacSpaPage = () => {
   const fetchRbacData = async () => {
     setLoading(true);
     try {
-      const [uRes, rRes, pRes, upRes, meRes] = await Promise.all([
+      const [uRes, rRes, pRes, upRes, meRes, tRes] = await Promise.all([
         apiRequest('/users?order=created_at.desc'),
         apiRequest('/roles'),
         apiRequest('/permissions'),
         apiRequest('/user_permissions'),
-        apiRequest('/me')
+        apiRequest('/me'),
+        apiRequest('/tenants?order=name.asc')
       ]);
 
       const meData = meRes.ok && meRes.data
@@ -58,6 +60,7 @@ export const UsersRbacSpaPage = () => {
       setPermissions(pRes.ok && Array.isArray(pRes.data) ? pRes.data : []);
       setUserPermissions(upRes.ok && Array.isArray(upRes.data) ? upRes.data : []);
       setCurrentUser(meData);
+      setTenants(tRes.ok && Array.isArray(tRes.data) ? tRes.data : []);
     } catch {
       message.error('Erro ao carregar dados do RBAC');
     } finally {
@@ -72,7 +75,6 @@ export const UsersRbacSpaPage = () => {
   const handleSaveUser = async (values) => {
     setEditorLoading(true);
     try {
-      const tenantId = currentUser?.tenant_id || '00000000-0000-0000-0000-000000000000';
       if (selectedUser) {
         const res = await apiRequest(`/users?id=eq.${selectedUser.id}`, {
           method: 'PATCH',
@@ -87,18 +89,27 @@ export const UsersRbacSpaPage = () => {
           message.error(res.data?.message || 'Falha ao atualizar usuário');
         }
       } else {
+        const payload = {
+          email: values.email?.trim(),
+          password: values.password,
+          full_name: values.full_name?.trim(),
+          role: values.role || 'member',
+          username: values.username?.trim() || null
+        };
+        if (values.tenant_id) {
+          payload.tenant_id = values.tenant_id;
+        }
+
         const res = await apiRequest('/rpc/register_user', {
           method: 'POST',
-          body: JSON.stringify({
-            email: values.email?.trim(),
-            password: values.password,
-            full_name: values.full_name?.trim(),
-            role: values.role || 'member',
-            username: values.username?.trim() || null
-          })
+          body: JSON.stringify(payload)
         });
         if (res.ok) {
-          message.success('Usuário cadastrado com sucesso');
+          message.success(
+            values.role === 'admin'
+              ? 'Administrador primordial criado com sucesso para o tenant!'
+              : 'Usuário cadastrado com sucesso'
+          );
           setUserEditorOpen(false);
           fetchRbacData();
         } else {
@@ -175,6 +186,8 @@ export const UsersRbacSpaPage = () => {
           roles={roles}
           permissions={permissions}
           userPermissions={userPermissions}
+          tenants={tenants}
+          isSuperadmin={isSuperadmin}
           currentUser={currentUser}
           loading={loading}
           onAddUser={() => {
@@ -203,6 +216,9 @@ export const UsersRbacSpaPage = () => {
         open={userEditorOpen}
         user={selectedUser}
         roles={roles}
+        tenants={tenants}
+        users={users}
+        isSuperadmin={isSuperadmin}
         onCancel={() => setUserEditorOpen(false)}
         onSubmit={handleSaveUser}
         loading={editorLoading}

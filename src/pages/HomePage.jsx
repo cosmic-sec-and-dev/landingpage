@@ -66,10 +66,14 @@ const appletColorSchemes = {
 
 export const HomePage = ({ applets = {}, modules = {}, onNavigate }) => {
   const { isDark } = useAppTheme();
-  const { hasAccess } = usePlan();
+  const { hasAccess, authorizedApplets } = usePlan();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const appletsData = Object.keys(applets).length > 0 ? applets : modules;
+  const effectiveApplets = (authorizedApplets && Object.keys(authorizedApplets).length > 0)
+    ? authorizedApplets
+    : (Object.keys(applets).length > 0 ? applets : modules);
+
+  const appletsData = effectiveApplets;
 
   // Format applets into app items
   const appsList = useMemo(() => {
@@ -298,7 +302,7 @@ export const HomePage = ({ applets = {}, modules = {}, onNavigate }) => {
 
       {/* 3. APPS GRID (LETTERS & VIBRANT COLORS) */}
       <Row gutter={[20, 20]}>
-        {filteredApps.map((app) => (
+        {filteredApps.filter(app => app.isAllowed).map((app) => (
           <Col xs={24} sm={12} md={8} lg={6} key={app.id}>
             <Card
               hoverable

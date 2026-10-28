@@ -20,6 +20,8 @@ export const MainAppView = ({
   roles = [],
   permissions = [],
   userPermissions = [],
+  tenants = [],
+  isSuperadmin = false,
   currentUser,
   loading,
   onAddUser,
@@ -185,6 +187,8 @@ export const MainAppView = ({
             <Col key={user.id} xs={24} sm={12} lg={8} xl={6}>
               <UserCard
                 user={user}
+                tenants={tenants}
+                isSuperadmin={isSuperadmin}
                 onEdit={onEditUser}
                 onDelete={onDeleteUser}
                 onToggleStatus={onToggleStatus}

@@ -59,6 +59,10 @@ export const MainAppView = ({
   const totalTenants = tenants.length;
 
   const handleToggleSubscription = async (record, checked) => {
+    if (!record?.id) {
+      message.error('ID da assinatura não encontrado');
+      return;
+    }
     try {
       const res = await apiRequest(`/subscriptions?id=eq.${record.id}`, {
         method: 'PATCH',
@@ -74,6 +78,10 @@ export const MainAppView = ({
   };
 
   const handleDeleteSubscription = async (id) => {
+    if (!id) {
+      message.error('ID da assinatura não informado');
+      return;
+    }
     try {
       const res = await apiRequest(`/subscriptions?id=eq.${id}`, {
         method: 'DELETE'

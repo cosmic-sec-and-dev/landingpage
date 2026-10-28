@@ -34,8 +34,8 @@ const LoginFormCard = ({ onLogin, loading, isDark, onNavigate, toggleTheme }) =>
       minHeight: '100vh',
       width: '100vw',
       background: isDark
-        ? 'radial-gradient(circle at 15% 20%, rgba(29, 78, 216, 0.45) 0%, transparent 45%), radial-gradient(circle at 85% 80%, rgba(234, 179, 8, 0.12) 0%, transparent 35%), radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.95) 0%, transparent 70%), #080d1a'
-        : 'radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.25) 0%, transparent 45%), radial-gradient(circle at 85% 80%, rgba(234, 179, 8, 0.1) 0%, transparent 35%), #f1f5f9',
+        ? 'radial-gradient(circle at 15% 20%, rgba(49, 111, 160, 0.45) 0%, transparent 45%), radial-gradient(circle at 85% 80%, rgba(192, 94, 110, 0.35) 0%, transparent 45%), radial-gradient(circle at 50% 50%, rgba(93, 75, 133, 0.25) 0%, transparent 60%), #151C37'
+        : 'radial-gradient(circle at 15% 20%, rgba(49, 111, 160, 0.15) 0%, transparent 45%), radial-gradient(circle at 85% 80%, rgba(192, 94, 110, 0.15) 0%, transparent 45%), #EFDFD2',
       padding: '20px',
       position: 'relative'
     }}>
@@ -129,10 +129,14 @@ const LoginFormCard = ({ onLogin, loading, isDark, onNavigate, toggleTheme }) =>
 };
 
 export const AdminLayout = ({ children, applets, modules, currentRoute, onNavigate }) => {
-  const { currentPlan, currentUser, setCurrentUser, refetchProfile } = usePlan();
+  const { currentPlan, currentUser, setCurrentUser, refetchProfile, authorizedApplets } = usePlan();
   const { isDark, toggleTheme } = useAppTheme();
   const [token, setToken] = useState(getAuthToken());
   const [loginLoading, setLoginLoading] = useState(false);
+
+  const effectiveApplets = (authorizedApplets && Object.keys(authorizedApplets).length > 0)
+    ? authorizedApplets
+    : (applets || modules || {});
 
   // Busca perfil /me quando o token estiver presente
   const fetchProfile = async () => {
@@ -242,10 +246,10 @@ export const AdminLayout = ({ children, applets, modules, currentRoute, onNaviga
       width: '100vw',
       overflow: 'hidden',
       background: isDark
-        ? 'linear-gradient(135deg, rgba(0, 0, 0, 1) 0%, rgb(10, 11, 61) 50%, rgb(166, 38, 122) 100%)'
-        : 'linear-gradient(135deg, rgb(255, 220, 249) 0%, rgb(229, 246, 255) 40%, rgb(249, 243, 190) 100%)'
+        ? 'linear-gradient(135deg, #151C37 0%, #273357 40%, #5D4B85 75%, #C05E6E 100%)'
+        : 'linear-gradient(135deg, #F7E9EC 0%, #EFDFD2 40%, #E0ECF5 75%, #FBEADB 100%)'
     }}>
-      <Sidebar applets={applets || modules} currentRoute={currentRoute} onNavigate={onNavigate} />
+      <Sidebar applets={effectiveApplets} currentRoute={currentRoute} onNavigate={onNavigate} />
       <Layout style={{
         height: '100vh',
         overflow: 'hidden',
